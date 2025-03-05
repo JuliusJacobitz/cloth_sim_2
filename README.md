@@ -1,4 +1,7 @@
 # Physics / Cloth sim
 
 ## Current state
-![TEST](test.gif)
+![TEST](images/chaotic.gif)
+
+## Stable orbits
+![TEST](images/stable_orbits.png)

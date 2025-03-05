@@ -20,13 +20,16 @@ drag = 0.1  # %
 
 
 class Circle:
-    def __init__(self, pos, vel, mass, radius=10):
+    def __init__(self, pos, vel, mass, radius=10, draw_history:bool=True):
         self.pos = pos  # meters
+        self.pos_history = []
         self.vel = vel  # m/s
         self.mass = mass  # kg
 
         self.radius = radius
         self.color = (255, 255, 255)
+
+        self.draw_history = draw_history
 
     def move(self, dt, a):
         a = a * SCALER
@@ -50,20 +53,27 @@ class Circle:
         #     self.pos[0] = abs(self.pos[0])
         #     self.vel[0] = -self.vel[0]
 
+        if self.draw_history:
+            self.pos_history.append((self.pos[0], self.pos[1]))
+
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
 
+        if self.draw_history:
+            if len(self.pos_history) > 1:
+                pygame.draw.lines(screen, (255,255,255),closed=False, points=
+                self.pos_history)
 
 c1 = Circle(
-    pygame.Vector2(600, 200), vel=pygame.Vector2(80, 0), mass=1e7
+    pygame.Vector2(500, 500), vel=pygame.Vector2(0, 0), mass=1e15
 )  # mass=5.972e24) # earth
 c2 = Circle(
-    pygame.Vector2(400, 200), vel=pygame.Vector2(-80, 0), mass=1e7
+    pygame.Vector2(400, 300), vel=pygame.Vector2(200, 0), mass=1e11
 )  # mass=7.34767309e22) # moon
-c3 = Circle(pygame.Vector2(500, 600), vel=pygame.Vector2(10, 0), mass=1e15, radius=30)
-c4 = Circle(pygame.Vector2(500, 200), vel=pygame.Vector2(90, 0), mass=1e14, radius=20)
+c3 = Circle(pygame.Vector2(500, 800), vel=pygame.Vector2(-200, 0), mass=1e11, radius=10)
+# c4 = Circle(pygame.Vector2(500, 200), vel=pygame.Vector2(90, 0), mass=1e14, radius=20)
 
-objects = [c1, c2, c3, c4]
+objects = [c1, c2,c3]
 
 while True:
     for event in pygame.event.get():
