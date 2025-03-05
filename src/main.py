@@ -20,19 +20,20 @@ fonts = create_fonts([32, 16, 14, 8])
 dt = 0
 
 # gravity acceleration constants
-SCALER = 1
 g = 9.81  # m/s^2
-drag = 0.1  # %
+DRAG = 0.00
 
 
 class Circle:
-    def __init__(self, pos, vel, mass, radius=10, draw_history: bool = True, fixed:bool = False):
+    def __init__(
+        self, pos, vel, mass, radius=10, draw_history: bool = True, fixed: bool = False
+    ):
         self.pos = pos  # meters
         self.pos_history = []
         self.vel = vel  # m/s
         self.mass = mass  # kg
 
-        self.fixed = fixed #if object is affected by outside forces
+        self.fixed = fixed  # if object is affected by outside forces
 
         self.radius = radius
         self.color = (255, 255, 255)
@@ -41,9 +42,11 @@ class Circle:
 
     def move(self, dt, a):
         if not self.fixed:
-            a = a * SCALER
             self.vel[0] = self.vel[0] + a[0] * dt
             self.vel[1] = self.vel[1] + a[1] * dt
+
+            if DRAG:
+                self.vel = self.vel - (DRAG * self.vel)
 
             self.pos[0] = self.pos[0] + self.vel[0] * dt
             self.pos[1] = self.pos[1] + self.vel[1] * dt
@@ -75,12 +78,8 @@ class Circle:
                 )
 
 
-c1 = Circle(
-    pygame.Vector2(500, 400), vel=pygame.Vector2(0, 0), mass=1e13
-)
-c2 = Circle(
-    pygame.Vector2(400, 500), vel=pygame.Vector2(0, 0), mass=1e15, fixed=True
-)
+c1 = Circle(pygame.Vector2(500, 400), vel=pygame.Vector2(0, 0), mass=1e13)
+c2 = Circle(pygame.Vector2(400, 500), vel=pygame.Vector2(0, 0), mass=1e15, fixed=True)
 c3 = Circle(pygame.Vector2(600, 500), vel=pygame.Vector2(0, 0), mass=1e15, fixed=True)
 
 objects = [c1, c2, c3]
