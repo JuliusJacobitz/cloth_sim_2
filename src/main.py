@@ -20,7 +20,6 @@ fonts = create_fonts([32, 16, 14, 8])
 dt = 0
 
 # gravity acceleration constants
-g = 9.81  # m/s^2
 DRAG = 0.00
 
 
