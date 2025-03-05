@@ -2,8 +2,8 @@
 ## Springs
 ![image](images/springs.png)
 
-## Current state
-![image](images/chaotic.gif)
+## Orbits
+![image](images/chaotic_orbits.gif)
 
 ## Stable orbits
 ![image](images/stable_orbits.png)
