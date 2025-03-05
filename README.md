@@ -1,9 +1,15 @@
 # Physics / Cloth sim
-## Springs
+## TODO
+* add factory for cloth
+* add interaction with springs
+
+
+## Current State
+### Springs
 ![image](images/springs.png)
 
-## Orbits
+### Orbits
 ![image](images/chaotic_orbits.gif)
 
-## Stable orbits
+### Stable orbits
 ![image](images/stable_orbits.png)

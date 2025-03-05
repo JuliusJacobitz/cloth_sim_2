@@ -15,18 +15,26 @@ dt = 0
 
 # create elements
 c1 = Circle(
-    pygame.Vector2(500, 400), vel=pygame.Vector2(0, 0), mass=1e1, draw_history=False
+    pygame.Vector2(300, 300), vel=pygame.Vector2(-400, 0), mass=0.1, draw_history=False
 )
-c2 = Circle(pygame.Vector2(400, 500), vel=pygame.Vector2(0, 0), mass=1e1, fixed=True)
-c3 = Circle(pygame.Vector2(600, 500), vel=pygame.Vector2(0, 0), mass=1e1, fixed=True)
-c4 = Circle(pygame.Vector2(30, 40), vel=pygame.Vector2(0, 0), mass=1e1, fixed=True)
-c5 = Circle(pygame.Vector2(100, 40), vel=pygame.Vector2(0, 0), mass=1e1, fixed=False)
-objects = [c1, c2, c3, c4, c5]
+c2 = Circle(
+    pygame.Vector2(400, 300), vel=pygame.Vector2(-400, 0), mass=0.1, draw_history=False
+)
+c3 = Circle(
+    pygame.Vector2(400, 400), vel=pygame.Vector2(-400, -100), mass=0.1, draw_history=False
+)
+c4 = Circle(
+    pygame.Vector2(300, 400), vel=pygame.Vector2(-400, -100), mass=0.1, draw_history=False
+)
+objects = [c1, c2, c3, c4]
 
 s_c1_c2 = Spring(c1, c2)
 s_c1_c3 = Spring(c1, c3)
-s1_c4_c5 = Spring(c4, c5, l=50)
-springs = [s_c1_c2, s_c1_c3, s1_c4_c5]
+s_c1_c4 = Spring(c1, c4)
+s_c2_c3 = Spring(c2, c3)
+s_c2_c4 = Spring(c2, c4)
+s_c3_c4 = Spring(c3, c4)
+springs = [s_c1_c2, s_c1_c3, s_c1_c4, s_c2_c3, s_c2_c4, s_c3_c4]
 
 # game loop
 while True:

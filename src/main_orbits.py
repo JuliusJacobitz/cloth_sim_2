@@ -14,8 +14,8 @@ fonts = create_fonts([32, 16, 14, 8])
 dt = 0
 
 # create elements
-c1 = Circle(pygame.Vector2(500, 300), vel=pygame.Vector2(100, 0), mass=1e14)
-c2 = Circle(pygame.Vector2(500, 500), vel=pygame.Vector2(-100, 0), mass=1e14)
+c1 = Circle(pygame.Vector2(500, 300), vel=pygame.Vector2(100, 0), mass=1e14, collide=False, fixed=False)
+c2 = Circle(pygame.Vector2(500, 500), vel=pygame.Vector2(-100, 0), mass=1e14, collide=False, fixed=False)
 
 objects = [c1, c2]
 springs = []

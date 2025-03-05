@@ -1,9 +1,9 @@
 import pygame
-from constants import DRAG
+from constants import DRAG, HEIGHT, WIDTH
 
 class Circle:
     def __init__(
-        self, pos, vel, mass, radius=10, draw_history: bool = True, fixed: bool = False
+        self, pos, vel, mass, radius=10, draw_history: bool = True, fixed: bool = False, collide:bool=True
     ):
         self.pos = pos  # meters
         self.pos_history = []
@@ -11,6 +11,7 @@ class Circle:
         self.mass = mass  # kg
 
         self.fixed = fixed  # if object is affected by outside forces
+        self.collide = collide # if object should collide with walls
 
         self.radius = radius
         self.color = (255, 255, 255)
@@ -28,19 +29,21 @@ class Circle:
             self.pos[0] = self.pos[0] + self.vel[0] * dt
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
-            # # Collision detection with ground
-            # if self.pos[1] + self.radius > HEIGHT:
-            #     self.pos[1] = HEIGHT-self.radius
-            #     self.vel[1] = -self.vel[1] * (1-drag)
+            if self.collide:
+                # Collision detection with ground
+                if self.pos[1] + self.radius > HEIGHT:
+                    self.pos[1] = HEIGHT-self.radius
 
-            # # Collision detection with walls
-            # if self.pos[0] > WIDTH:
-            #     self.pos[0] = WIDTH - abs(WIDTH-self.pos[0])
-            #     self.vel[0] = -self.vel[0]
+                # Collision detection with walls
+                # right wall
+                if self.pos[0] > WIDTH:
+                    self.pos[0] = WIDTH - abs(WIDTH-self.pos[0])
+                    self.vel[0] = -self.vel[0]
 
-            # if self.pos[0] < 0:
-            #     self.pos[0] = abs(self.pos[0])
-            #     self.vel[0] = -self.vel[0]
+                # left wall
+                if self.pos[0] < 0:
+                    self.pos[0] = abs(self.pos[0])
+                    self.vel[0] = -self.vel[0]
 
             if self.draw_history:
                 self.pos_history.append((self.pos[0], self.pos[1]))
@@ -63,8 +66,8 @@ class Spring:
         self,
         obj1: Circle,
         obj2: Circle,
-        l: float = 30,
-        D: float = 10,
+        l: float = 100,
+        D: float = 1,
     ):
         self.D = D  # spring-constant D
         self.l = l  # length of spring in rest
@@ -78,7 +81,7 @@ class Spring:
 
     @property
     def delta_l(self):
-        return abs(self.current_l - self.l)
+        return self.current_l - self.l
 
     def get_neighbour_obj(self, obj: Circle):
         assert obj in [self.obj1, self.obj2]
