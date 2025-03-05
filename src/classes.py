@@ -1,17 +1,26 @@
 import pygame
 from constants import DRAG, HEIGHT, WIDTH
 
+
 class Circle:
     def __init__(
-        self, pos, vel, mass, radius=10, draw_history: bool = True, fixed: bool = False, collide:bool=True
+        self,
+        pos,
+        vel,
+        mass,
+        radius=10,
+        draw_history: bool = True,
+        fixed: bool = False,
+        collide: bool = True,
     ):
         self.pos = pos  # meters
         self.pos_history = []
         self.vel = vel  # m/s
+        assert mass != 0
         self.mass = mass  # kg
 
         self.fixed = fixed  # if object is affected by outside forces
-        self.collide = collide # if object should collide with walls
+        self.collide = collide  # if object should collide with walls
 
         self.radius = radius
         self.color = (255, 255, 255)
@@ -32,12 +41,12 @@ class Circle:
             if self.collide:
                 # Collision detection with ground
                 if self.pos[1] + self.radius > HEIGHT:
-                    self.pos[1] = HEIGHT-self.radius
+                    self.pos[1] = HEIGHT - self.radius
 
                 # Collision detection with walls
                 # right wall
                 if self.pos[0] > WIDTH:
-                    self.pos[0] = WIDTH - abs(WIDTH-self.pos[0])
+                    self.pos[0] = WIDTH - abs(WIDTH - self.pos[0])
                     self.vel[0] = -self.vel[0]
 
                 # left wall
@@ -94,4 +103,3 @@ class Spring:
 
     def draw(self, screen):
         pygame.draw.line(screen, "red", self.obj1.pos, self.obj2.pos, width=2)
-
