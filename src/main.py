@@ -1,6 +1,9 @@
 import pygame
 import sys
-from utils import calc_acc
+from utils.calculations import calc_acc
+from utils.fps import display_fps
+from utils.misc import create_fonts
+
 
 pygame.init()
 
@@ -10,9 +13,11 @@ speed = [2, 2]
 black = 0, 0, 0
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-TARGET_FPS = 120
-dt = 0
+TARGET_FPS = 60
 
+fonts = create_fonts([32, 16, 14, 8])
+
+dt = 0
 # gravity acceleration constants
 SCALER = 1
 g = 9.81  # m/s^2
@@ -20,7 +25,7 @@ drag = 0.1  # %
 
 
 class Circle:
-    def __init__(self, pos, vel, mass, radius=10, draw_history:bool=True):
+    def __init__(self, pos, vel, mass, radius=10, draw_history: bool = True):
         self.pos = pos  # meters
         self.pos_history = []
         self.vel = vel  # m/s
@@ -61,8 +66,10 @@ class Circle:
 
         if self.draw_history:
             if len(self.pos_history) > 1:
-                pygame.draw.lines(screen, (255,255,255),closed=False, points=
-                self.pos_history)
+                pygame.draw.lines(
+                    screen, (255, 255, 255), closed=False, points=self.pos_history
+                )
+
 
 c1 = Circle(
     pygame.Vector2(500, 500), vel=pygame.Vector2(0, 0), mass=1e15
@@ -73,7 +80,7 @@ c2 = Circle(
 c3 = Circle(pygame.Vector2(500, 800), vel=pygame.Vector2(-200, 0), mass=1e11, radius=10)
 # c4 = Circle(pygame.Vector2(500, 200), vel=pygame.Vector2(90, 0), mass=1e14, radius=20)
 
-objects = [c1, c2,c3]
+objects = [c1, c2, c3]
 
 while True:
     for event in pygame.event.get():
@@ -87,6 +94,7 @@ while True:
         obj.move(dt=dt, a=accelerations[i])
         obj.draw(screen)
 
-    pygame.display.flip()
+    display_fps(fonts=fonts, clock=clock, screen=screen)
 
-    dt = clock.tick(60) / 1000
+    pygame.display.flip()
+    dt = clock.tick(TARGET_FPS) / 1000
