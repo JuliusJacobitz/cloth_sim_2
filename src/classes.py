@@ -1,28 +1,5 @@
 import pygame
-import sys
-from utils.calculations import calc_acc
-from utils.fps import display_fps
-from utils.misc import create_fonts
-
-
-pygame.init()
-
-# pygame constants
-size = WIDTH, HEIGHT = 1000, 1000
-speed = [2, 2]
-black = 0, 0, 0
-screen = pygame.display.set_mode(size)
-clock = pygame.time.Clock()
-TARGET_FPS = 60
-
-fonts = create_fonts([32, 16, 14, 8])
-
-dt = 0
-
-# gravity acceleration constants
-g = 9.81  # m/s^2
-DRAG = 0.00
-
+from constants import DRAG
 
 class Circle:
     def __init__(
@@ -77,26 +54,41 @@ class Circle:
                     screen, (255, 255, 255), closed=False, points=self.pos_history
                 )
 
+    def get_attatched_springs(self, springs):
+        return [i for i in springs if (i.obj1 == self) or (i.obj2 == self)]
 
-c1 = Circle(pygame.Vector2(500, 400), vel=pygame.Vector2(0, 0), mass=1e13)
-c2 = Circle(pygame.Vector2(400, 500), vel=pygame.Vector2(0, 0), mass=1e15, fixed=True)
-c3 = Circle(pygame.Vector2(600, 500), vel=pygame.Vector2(0, 0), mass=1e15, fixed=True)
 
-objects = [c1, c2, c3]
+class Spring:
+    def __init__(
+        self,
+        obj1: Circle,
+        obj2: Circle,
+        l: float = 30,
+        D: float = 10,
+    ):
+        self.D = D  # spring-constant D
+        self.l = l  # length of spring in rest
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
+        self.obj1 = obj1
+        self.obj2 = obj2
 
-    screen.fill(black)
+    @property
+    def current_l(self):
+        return self.obj1.pos.distance_to(self.obj2.pos)
 
-    accelerations = calc_acc(objects=objects)
-    for i, obj in enumerate(objects):
-        obj.move(dt=dt, a=accelerations[i])
-        obj.draw(screen)
+    @property
+    def delta_l(self):
+        return abs(self.current_l - self.l)
 
-    display_fps(fonts=fonts, clock=clock, screen=screen)
+    def get_neighbour_obj(self, obj: Circle):
+        assert obj in [self.obj1, self.obj2]
+        if obj == self.obj1:
+            return self.obj2
+        elif obj == self.obj2:
+            return self.obj1
+        else:
+            raise ValueError("No neighbour found for given obj")
 
-    pygame.display.flip()
-    dt = clock.tick(TARGET_FPS) / 1000
+    def draw(self, screen):
+        pygame.draw.line(screen, "red", self.obj1.pos, self.obj2.pos, width=2)
+
