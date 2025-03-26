@@ -1,5 +1,7 @@
 # Physics / Cloth sim
 ## TODO
+* change to verlet integration
+* fix 1px = 1meter problem
 * add factory for cloth
 * add interaction with springs
 

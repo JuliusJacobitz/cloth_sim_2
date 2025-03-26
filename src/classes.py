@@ -1,8 +1,10 @@
 import pygame
-from constants import DRAG, HEIGHT, WIDTH
+from constants import HEIGHT, WIDTH
 
 
 class Circle:
+    air_drag_coef = 1e-4
+
     def __init__(
         self,
         pos,
@@ -32,9 +34,6 @@ class Circle:
             self.vel[0] = self.vel[0] + a[0] * dt
             self.vel[1] = self.vel[1] + a[1] * dt
 
-            if DRAG:
-                self.vel = self.vel - (DRAG * self.vel)
-
             self.pos[0] = self.pos[0] + self.vel[0] * dt
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
@@ -42,6 +41,7 @@ class Circle:
                 # Collision detection with ground
                 if self.pos[1] + self.radius > HEIGHT:
                     self.pos[1] = HEIGHT - self.radius
+                    self.vel[1] = 0
 
                 # Collision detection with walls
                 # right wall
@@ -67,7 +67,9 @@ class Circle:
                 )
 
     def get_attatched_springs(self, springs):
-        return [i for i in springs if (i.obj1 == self) or (i.obj2 == self)]
+        res = [i for i in springs if (i.obj1 == self) or (i.obj2 == self)]
+        assert len(set(res)) == len(res)
+        return res
 
 
 class Spring:
@@ -76,7 +78,7 @@ class Spring:
         obj1: Circle,
         obj2: Circle,
         l: float = 100,
-        D: float = 1,
+        D: float = 100,
     ):
         self.D = D  # spring-constant D
         self.l = l  # length of spring in rest
@@ -92,7 +94,7 @@ class Spring:
     def delta_l(self):
         return self.current_l - self.l
 
-    def get_neighbour_obj(self, obj: Circle):
+    def get_neighbour_obj(self, obj: Circle) -> Circle:
         assert obj in [self.obj1, self.obj2]
         if obj == self.obj1:
             return self.obj2

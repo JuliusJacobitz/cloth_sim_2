@@ -15,16 +15,35 @@ dt = 0
 
 # create elements
 c1 = Circle(
-    pygame.Vector2(300, 300), vel=pygame.Vector2(-400, 0), mass=0.1, draw_history=False
+    pygame.Vector2(200, 200),
+    vel=pygame.Vector2(0, 0),
+    mass=1,
+    draw_history=False,
+    fixed=False,
 )
 c2 = Circle(
-    pygame.Vector2(400, 300), vel=pygame.Vector2(-400, 0), mass=0.1, draw_history=False
+    pygame.Vector2(400, 200),
+    vel=pygame.Vector2(300, 0),
+    mass=1,
+    draw_history=False,
+    fixed=False,
+    
 )
 c3 = Circle(
-    pygame.Vector2(400, 400), vel=pygame.Vector2(-400, -100), mass=0.1, draw_history=False
+    pygame.Vector2(200, 400),
+    vel=pygame.Vector2(0, 0),
+    mass=1,
+    draw_history=False,
+    fixed=False,
+    
 )
 c4 = Circle(
-    pygame.Vector2(300, 400), vel=pygame.Vector2(-400, -100), mass=0.1, draw_history=False
+    pygame.Vector2(400, 400),
+    vel=pygame.Vector2(0, 0),
+    mass=1,
+    draw_history=False,
+    fixed=False,
+    
 )
 objects = [c1, c2, c3, c4]
 
