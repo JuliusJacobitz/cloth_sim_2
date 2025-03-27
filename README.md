@@ -1,7 +1,9 @@
 # Physics / Cloth sim
 ## TODO
+* add dynamic zoom
+* add 1x1 meter grid in background
+
 * change to verlet integration
-* fix 1px = 1meter problem
 * add factory for cloth
 * add interaction with springs
 

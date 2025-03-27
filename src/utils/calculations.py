@@ -1,5 +1,5 @@
 from scipy.constants import G, g
-
+import random
 import pygame
 from typing import List
 import math
@@ -40,7 +40,14 @@ def calc_acc(
             obj2 = spring.get_neighbour_obj(obj1)
 
             # f = spring.D * spring.delta_l
-            direction = (obj2.pos - obj1.pos).normalize()
+            diff = (obj2.pos - obj1.pos)
+            try:
+                direction = diff.normalize()
+            except ValueError:
+                # TODO this can also resutl in 0,0 -> fix
+                direction = pygame.Vector2((random.uniform(-1, 1),random.uniform(-1, 1))).normalize()
+                
+
 
             # dampening
             dampening_coeff:float = 2*0.1*math.sqrt(spring.D*obj1.mass)

@@ -1,5 +1,6 @@
 import pygame
 from constants import HEIGHT, WIDTH
+from utils.rendering import screen_to_world, world_to_screen
 
 
 class Circle:
@@ -10,7 +11,7 @@ class Circle:
         pos,
         vel,
         mass,
-        radius=10,
+        radius=0.1, # 10 cm
         draw_history: bool = True,
         fixed: bool = False,
         collide: bool = True,
@@ -38,15 +39,17 @@ class Circle:
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
             if self.collide:
+                W_HEIGHT= screen_to_world(HEIGHT)
+                W_WIDTH = screen_to_world(WIDTH)
                 # Collision detection with ground
-                if self.pos[1] + self.radius > HEIGHT:
-                    self.pos[1] = HEIGHT - self.radius
+                if self.pos[1] + self.radius > W_HEIGHT:
+                    self.pos[1] = W_HEIGHT - self.radius
                     self.vel[1] = 0
 
                 # Collision detection with walls
                 # right wall
-                if self.pos[0] > WIDTH:
-                    self.pos[0] = WIDTH - abs(WIDTH - self.pos[0])
+                if self.pos[0] > W_WIDTH:
+                    self.pos[0] = W_WIDTH - abs(W_WIDTH - self.pos[0])
                     self.vel[0] = -self.vel[0]
 
                 # left wall
@@ -58,13 +61,14 @@ class Circle:
                 self.pos_history.append((self.pos[0], self.pos[1]))
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
+        pygame.draw.circle(screen, self.color, world_to_screen(self.pos), world_to_screen(self.radius))
 
         if self.draw_history:
-            if len(self.pos_history) > 1:
-                pygame.draw.lines(
-                    screen, (255, 255, 255), closed=False, points=self.pos_history
-                )
+            # if len(self.pos_history) > 1:
+            #     pygame.draw.lines(
+            #         screen, (255, 255, 255), closed=False, points=self.pos_history
+            #     )
+            raise NotImplementedError()
 
     def get_attatched_springs(self, springs):
         res = [i for i in springs if (i.obj1 == self) or (i.obj2 == self)]
@@ -77,7 +81,7 @@ class Spring:
         self,
         obj1: Circle,
         obj2: Circle,
-        l: float = 100,
+        l: float = 1,
         D: float = 100,
     ):
         self.D = D  # spring-constant D
@@ -104,4 +108,10 @@ class Spring:
             raise ValueError("No neighbour found for given obj")
 
     def draw(self, screen):
-        pygame.draw.line(screen, "red", self.obj1.pos, self.obj2.pos, width=2)
+        pygame.draw.line(
+            screen,
+            "red",
+            world_to_screen(self.obj1.pos),
+            world_to_screen(self.obj2.pos),
+            width=1,
+        )
