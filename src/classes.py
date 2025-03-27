@@ -11,7 +11,7 @@ class Circle:
         pos,
         vel,
         mass,
-        radius=0.1, # 10 cm
+        radius=0.1,  # 10 cm
         draw_history: bool = True,
         fixed: bool = False,
         collide: bool = True,
@@ -39,7 +39,7 @@ class Circle:
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
             if self.collide:
-                W_HEIGHT= screen_to_world(HEIGHT)
+                W_HEIGHT = screen_to_world(HEIGHT)
                 W_WIDTH = screen_to_world(WIDTH)
                 # Collision detection with ground
                 if self.pos[1] + self.radius > W_HEIGHT:
@@ -61,7 +61,9 @@ class Circle:
                 self.pos_history.append((self.pos[0], self.pos[1]))
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, world_to_screen(self.pos), world_to_screen(self.radius))
+        pygame.draw.circle(
+            screen, self.color, world_to_screen(self.pos), world_to_screen(self.radius)
+        )
 
         if self.draw_history:
             # if len(self.pos_history) > 1:

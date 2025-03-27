@@ -5,10 +5,12 @@ from utils.fps import display_fps
 from utils.misc import create_fonts
 from constants import size, TARGET_FPS
 from classes import Spring, Circle
+from utils.rendering import Background
 
 # pygame
 pygame.init()
 screen = pygame.display.set_mode(size)
+background = Background()
 clock = pygame.time.Clock()
 fonts = create_fonts([32, 16, 14, 8])
 dt = 0
@@ -23,11 +25,10 @@ c1 = Circle(
 )
 c2 = Circle(
     pygame.Vector2(4, 4),
-    vel=pygame.Vector2(0, 0),
+    vel=pygame.Vector2(0, 100),
     mass=1,
     draw_history=False,
     fixed=False,
-    
 )
 c3 = Circle(
     pygame.Vector2(3, 4),
@@ -35,7 +36,6 @@ c3 = Circle(
     mass=1,
     draw_history=False,
     fixed=False,
-    
 )
 c4 = Circle(
     pygame.Vector2(4, 3),
@@ -43,7 +43,6 @@ c4 = Circle(
     mass=1,
     draw_history=False,
     fixed=False,
-    
 )
 objects = [c1, c2, c3, c4]
 
@@ -55,6 +54,7 @@ s_c2_c4 = Spring(c2, c4)
 s_c3_c4 = Spring(c3, c4)
 springs = [s_c1_c2, s_c1_c3, s_c1_c4, s_c2_c3, s_c2_c4, s_c3_c4]
 
+
 # game loop
 while True:
     for event in pygame.event.get():
@@ -62,6 +62,8 @@ while True:
             sys.exit()
 
     screen.fill((0, 0, 0))
+
+    background.draw(screen)
 
     accelerations = calc_acc(
         objects=objects,
