@@ -44,8 +44,9 @@ def calc_acc(
             try:
                 direction = diff.normalize()
             except ValueError:
-                # TODO this can also resutl in 0,0 -> fix
-                direction = pygame.Vector2((random.uniform(-1, 1),random.uniform(-1, 1))).normalize()
+                direction = pygame.Vector2((0,0))
+                while direction == pygame.Vector2(0,0):
+                    direction = pygame.Vector2((random.uniform(-1, 1),random.uniform(-1, 1))).normalize()
                 
 
 
