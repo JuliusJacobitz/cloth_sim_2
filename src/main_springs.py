@@ -5,7 +5,7 @@ from utils.fps import display_fps
 from utils.misc import create_fonts
 from constants import size, TARGET_FPS
 from classes import Spring, Circle
-from utils.rendering import Background
+from utils.rendering import Background, SCALER
 
 # pygame
 pygame.init()
@@ -60,6 +60,13 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_o:
+                SCALER.scaling_factor *= 0.90
+
+            elif event.key == pygame.K_p:
+                SCALER.scaling_factor *= 1.10
 
     screen.fill((0, 0, 0))
 

@@ -1,6 +1,6 @@
 import pygame
 from constants import HEIGHT, WIDTH
-from utils.rendering import screen_to_world, world_to_screen
+from utils.rendering import SCALER
 
 
 class Circle:
@@ -39,8 +39,8 @@ class Circle:
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
             if self.collide:
-                W_HEIGHT = screen_to_world(HEIGHT)
-                W_WIDTH = screen_to_world(WIDTH)
+                W_HEIGHT = SCALER.screen_to_world(HEIGHT)
+                W_WIDTH = SCALER.screen_to_world(WIDTH)
                 # Collision detection with ground
                 if self.pos[1] + self.radius > W_HEIGHT:
                     self.pos[1] = W_HEIGHT - self.radius
@@ -62,7 +62,7 @@ class Circle:
 
     def draw(self, screen):
         pygame.draw.circle(
-            screen, self.color, world_to_screen(self.pos), world_to_screen(self.radius)
+            screen, self.color,SCALER.world_to_screen(self.pos), SCALER.world_to_screen(self.radius)
         )
 
         if self.draw_history:
@@ -84,7 +84,7 @@ class Spring:
         obj1: Circle,
         obj2: Circle,
         l: float = 1,
-        D: float = 100,
+        D: float = 1000,
     ):
         self.D = D  # spring-constant D
         self.l = l  # length of spring in rest
@@ -113,7 +113,7 @@ class Spring:
         pygame.draw.line(
             screen,
             "red",
-            world_to_screen(self.obj1.pos),
-            world_to_screen(self.obj2.pos),
+            SCALER.world_to_screen(self.obj1.pos),
+            SCALER.world_to_screen(self.obj2.pos),
             width=1,
         )
