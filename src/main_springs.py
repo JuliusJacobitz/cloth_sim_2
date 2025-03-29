@@ -14,6 +14,7 @@ background = Background()
 clock = pygame.time.Clock()
 fonts = create_fonts([32, 16, 14, 8])
 dt = 0
+attatched_to_mouse = None
 
 # create elements
 c1 = Circle(
@@ -57,6 +58,10 @@ springs = [s_c1_c2, s_c1_c3, s_c1_c4, s_c2_c3, s_c2_c4, s_c3_c4]
 
 # game loop
 while True:
+    # inputs
+    mouse_pos_screen = pygame.Vector2(pygame.mouse.get_pos())
+    mouse_pos_world = SCALER.screen_to_world(mouse_pos_screen)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
@@ -68,10 +73,29 @@ while True:
             elif event.key == pygame.K_p:
                 SCALER.scaling_factor *= 1.10
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # check which object overlays with mouse
+            if not attatched_to_mouse:
+                for obj in objects:
+                    if mouse_pos_world.distance_squared_to(obj.pos) <= obj.radius:
+                        attatched_to_mouse = obj
+                        break
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            if attatched_to_mouse:
+                attatched_to_mouse.fixed = False
+            attatched_to_mouse = None
+
     screen.fill((0, 0, 0))
 
     background.draw(screen)
 
+    # interaction
+    if attatched_to_mouse:
+        attatched_to_mouse.fixed = True
+        attatched_to_mouse.pos = mouse_pos_world
+
+    # rest
     accelerations = calc_acc(
         objects=objects,
         springs=springs,

@@ -6,7 +6,7 @@ Use [this](https://de.wikipedia.org/wiki/Reibungskoeffizient) for this purpose. 
 
 * change to verlet integration
 * add factory for cloth
-* add interaction with springs
+* add camera with offset movable
 
 
 ## Current State
