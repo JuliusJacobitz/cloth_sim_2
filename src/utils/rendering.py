@@ -1,38 +1,54 @@
-from constants import INITIAL_SCALING_FACTOR
+from constants import INITIAL_SCALING_FACTOR, INITIAL_CAM_POS
 import pygame
 
 
-class Scaler:
-    def __init__(self, scaling_factor=INITIAL_SCALING_FACTOR):
+class Camera:
+    def __init__(self, scaling_factor=INITIAL_SCALING_FACTOR, pos=INITIAL_CAM_POS):
         self.scaling_factor = scaling_factor
+        self.pos = pos
 
-    def world_to_screen(self, x):
-        return x * self.scaling_factor
+        self.movement_keys = (
+            pygame.K_DOWN,
+            pygame.K_UP,
+            pygame.K_RIGHT,
+            pygame.K_LEFT,
+            pygame.K_o,
+            pygame.K_p,
+        )
 
-    def screen_to_world(self, x):
-        return x / self.scaling_factor
+    def world_to_screen(self, x, y, offset=True):
+        if offset:
+            x = x - self.pos[0]
+            y = y - self.pos[1]
+        x = x * self.scaling_factor
+        y = y * self.scaling_factor
+        return (x, y)
+
+    def screen_to_world(self, x, y, offset=True):
+        x = (x / self.scaling_factor) + self.pos[0]
+        y = (y / self.scaling_factor) + self.pos[1]
+        return (x, y)
+
+    def move(self, key):
+        # scaling
+        if key == pygame.K_o:
+            self.scaling_factor *= 0.90
+
+        elif key == pygame.K_p:
+            self.scaling_factor *= 1.10
+
+        # movement
+        elif key == pygame.K_UP:
+            self.pos += pygame.Vector2(0, -2.5)
+
+        elif key == pygame.K_DOWN:
+            self.pos += pygame.Vector2(0, 2.5)
+
+        elif key == pygame.K_LEFT:
+            self.pos += pygame.Vector2(-2.5, 0)
+
+        elif key == pygame.K_RIGHT:
+            self.pos += pygame.Vector2(2.5, 0)
 
 
-class Background:
-    def __init__(self, color=(35, 35, 35)):
-        self.color = color
-
-    def draw(self, screen):
-        screen_width, screen_height = screen.get_size()
-        world_width = SCALER.screen_to_world(screen_width)
-        world_height = SCALER.screen_to_world(screen_height)
-
-        # vertical lines
-        for i in range(int(world_width) + 1):
-            start = pygame.Vector2(SCALER.world_to_screen(i), 0)
-            end = pygame.Vector2(SCALER.world_to_screen(i), screen_height)
-            pygame.draw.line(screen, self.color, start_pos=start, end_pos=end)
-
-        # horizontal lines
-        for i in range(int(world_height) + 1):
-            start = pygame.Vector2(0, SCALER.world_to_screen(i))
-            end = pygame.Vector2(screen_width, SCALER.world_to_screen(i))
-            pygame.draw.line(screen, self.color, start_pos=start, end_pos=end)
-
-
-SCALER = Scaler()
+CAMERA = Camera()

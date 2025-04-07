@@ -3,14 +3,14 @@ import sys
 from utils.calculations import calc_acc
 from utils.fps import display_fps
 from utils.misc import create_fonts
-from constants import size, TARGET_FPS
-from classes import Spring, Circle
-from utils.rendering import Background, SCALER
+from constants import window_size, TARGET_FPS
+from classes import Spring, Circle, World
+from utils.rendering import CAMERA
 
 # pygame
 pygame.init()
-screen = pygame.display.set_mode(size)
-background = Background()
+screen = pygame.display.set_mode(window_size)
+background = World()
 clock = pygame.time.Clock()
 fonts = create_fonts([32, 16, 14, 8])
 dt = 0
@@ -25,7 +25,7 @@ c1 = Circle(
     fixed=False,
 )
 c2 = Circle(
-    pygame.Vector2(4, 4),
+    pygame.Vector2(-10, 4),
     vel=pygame.Vector2(0, 100),
     mass=1,
     draw_history=False,
@@ -45,7 +45,16 @@ c4 = Circle(
     draw_history=False,
     fixed=False,
 )
-objects = [c1, c2, c3, c4]
+
+c_origin = Circle(
+    pygame.Vector2(10, 10),
+    vel=pygame.Vector2(0, 0),
+    mass=1,
+    fixed=True,
+    color=(255, 0, 0),
+)
+
+objects = [c1, c2, c3, c4, c_origin]
 
 s_c1_c2 = Spring(c1, c2)
 s_c1_c3 = Spring(c1, c3)
@@ -59,19 +68,16 @@ springs = [s_c1_c2, s_c1_c3, s_c1_c4, s_c2_c3, s_c2_c4, s_c3_c4]
 # game loop
 while True:
     # inputs
-    mouse_pos_screen = pygame.Vector2(pygame.mouse.get_pos())
-    mouse_pos_world = SCALER.screen_to_world(mouse_pos_screen)
+    mouse_pos_screen = pygame.mouse.get_pos()
+    mouse_pos_world = pygame.Vector2(CAMERA.screen_to_world(mouse_pos_screen[0], mouse_pos_screen[1]))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_o:
-                SCALER.scaling_factor *= 0.90
-
-            elif event.key == pygame.K_p:
-                SCALER.scaling_factor *= 1.10
+            if event.key in CAMERA.movement_keys:
+                CAMERA.move(event.key)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             # check which object overlays with mouse

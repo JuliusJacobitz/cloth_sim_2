@@ -1,7 +1,43 @@
 import pygame
-from constants import HEIGHT, WIDTH
-from utils.rendering import SCALER
+from constants import WORLD_HEIGHT, WORLD_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
+from utils.rendering import CAMERA
 
+# TODO create abstract object class that implements fixed, gravity move and draw, pos etc
+# class AbstractOjbect:
+#     pass
+
+# class Rectangle:
+#     def __init__(self, pos):
+#         self.pos = pos
+        
+#         self.color = (255,255,255)
+
+#     def move(self)
+
+#     def draw(self,screen):
+#         pygame.draw.rect(screen, color=self.color, pygame.Rect())
+
+
+# TODO add all objects and springs and shit  to the world as "children"
+class World:
+    def __init__(self, width=WORLD_WIDTH, height=WORLD_HEIGHT, color=(35, 35, 35)):
+        self.width = width
+        self.height = height
+        self.color = color
+
+    def draw(self, screen):
+
+        # vertical lines
+        for i in range(int(self.width) + 1):
+            start = pygame.Vector2(CAMERA.world_to_screen(i, 0))
+            end = pygame.Vector2(CAMERA.world_to_screen(i, self.height))
+            pygame.draw.line(screen, self.color, start_pos=start, end_pos=end)
+
+        # horizontal lines
+        for i in range(int(self.height) + 1):
+            start = pygame.Vector2(CAMERA.world_to_screen(0, i))
+            end = pygame.Vector2(CAMERA.world_to_screen(self.width, i))
+            pygame.draw.line(screen, self.color, start_pos=start, end_pos=end)
 
 class Circle:
     air_drag_coef = 1e-4
@@ -12,9 +48,10 @@ class Circle:
         vel,
         mass,
         radius=0.1,  # 10 cm
-        draw_history: bool = True,
+        draw_history: bool = False,
         fixed: bool = False,
         collide: bool = True,
+        color = (255,255,255)
     ):
         self.pos = pos  # meters
         self.pos_history = []
@@ -26,7 +63,7 @@ class Circle:
         self.collide = collide  # if object should collide with walls
 
         self.radius = radius
-        self.color = (255, 255, 255)
+        self.color =  color
 
         self.draw_history = draw_history
 
@@ -39,17 +76,15 @@ class Circle:
             self.pos[1] = self.pos[1] + self.vel[1] * dt
 
             if self.collide:
-                W_HEIGHT = SCALER.screen_to_world(HEIGHT)
-                W_WIDTH = SCALER.screen_to_world(WIDTH)
                 # Collision detection with ground
-                if self.pos[1] + self.radius > W_HEIGHT:
-                    self.pos[1] = W_HEIGHT - self.radius
+                if self.pos[1] + self.radius > WORLD_HEIGHT:
+                    self.pos[1] = WORLD_HEIGHT - self.radius
                     self.vel[1] = 0
 
                 # Collision detection with walls
                 # right wall
-                if self.pos[0] > W_WIDTH:
-                    self.pos[0] = W_WIDTH - abs(W_WIDTH - self.pos[0])
+                if self.pos[0] > WORLD_WIDTH:
+                    self.pos[0] = WORLD_WIDTH - abs(WORLD_WIDTH - self.pos[0])
                     self.vel[0] = -self.vel[0]
 
                 # left wall
@@ -62,7 +97,7 @@ class Circle:
 
     def draw(self, screen):
         pygame.draw.circle(
-            screen, self.color,SCALER.world_to_screen(self.pos), SCALER.world_to_screen(self.radius)
+            screen, self.color,CAMERA.world_to_screen(self.pos[0],self.pos[1]), self.radius*CAMERA.scaling_factor
         )
 
         if self.draw_history:
@@ -113,7 +148,7 @@ class Spring:
         pygame.draw.line(
             screen,
             "red",
-            SCALER.world_to_screen(self.obj1.pos),
-            SCALER.world_to_screen(self.obj2.pos),
+            CAMERA.world_to_screen(self.obj1.pos[0],self.obj1.pos[1]),
+            CAMERA.world_to_screen(self.obj2.pos[0], self.obj2.pos[1]),
             width=1,
         )
