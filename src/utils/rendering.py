@@ -7,14 +7,14 @@ class Camera:
         self.scaling_factor = scaling_factor
         self.pos = pos
 
-        self.movement_keys = (
-            pygame.K_DOWN,
-            pygame.K_UP,
-            pygame.K_RIGHT,
-            pygame.K_LEFT,
-            pygame.K_o,
-            pygame.K_p,
-        )
+        self.movement_keys = {
+            "down": pygame.K_DOWN,
+            "up": pygame.K_UP,
+            "right": pygame.K_RIGHT,
+            "left": pygame.K_LEFT,
+            "z_out": pygame.K_o,
+            "z_in": pygame.K_p,
+        }
 
     def world_to_screen(self, x, y, offset=True):
         if offset:
@@ -25,29 +25,32 @@ class Camera:
         return (x, y)
 
     def screen_to_world(self, x, y, offset=True):
-        x = (x / self.scaling_factor) + self.pos[0]
-        y = (y / self.scaling_factor) + self.pos[1]
+        x = x / self.scaling_factor
+        y = y / self.scaling_factor
+        if offset:
+            x += self.pos[0]
+            y += self.pos[1]
         return (x, y)
 
     def move(self, key):
         # scaling
-        if key == pygame.K_o:
+        if key == self.movement_keys["z_out"]:
             self.scaling_factor *= 0.90
 
-        elif key == pygame.K_p:
+        elif key == self.movement_keys["z_in"]:
             self.scaling_factor *= 1.10
 
         # movement
-        elif key == pygame.K_UP:
+        elif key == self.movement_keys["up"]:
             self.pos += pygame.Vector2(0, -2.5)
 
-        elif key == pygame.K_DOWN:
+        elif key == self.movement_keys["down"]:
             self.pos += pygame.Vector2(0, 2.5)
 
-        elif key == pygame.K_LEFT:
+        elif key == self.movement_keys["left"]:
             self.pos += pygame.Vector2(-2.5, 0)
 
-        elif key == pygame.K_RIGHT:
+        elif key == self.movement_keys["right"]:
             self.pos += pygame.Vector2(2.5, 0)
 
 

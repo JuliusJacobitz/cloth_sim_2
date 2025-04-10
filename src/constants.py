@@ -4,8 +4,8 @@ window_size = WINDOW_WIDTH, WINDOW_HEIGHT = 1000,700
 
 # world coordinates
 # Grid world background
-WORLD_WIDTH = 50
-WORLD_HEIGHT = 50
+WORLD_WIDTH = 15
+WORLD_HEIGHT = 15
 
 
 TARGET_FPS = 60

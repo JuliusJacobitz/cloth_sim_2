@@ -19,14 +19,14 @@ attatched_to_mouse = None
 # create elements
 c1 = Circle(
     pygame.Vector2(3, 3),
-    vel=pygame.Vector2(200, 0),
+    vel=pygame.Vector2(10, 0),
     mass=1,
     draw_history=False,
     fixed=False,
 )
 c2 = Circle(
-    pygame.Vector2(-10, 4),
-    vel=pygame.Vector2(0, 100),
+    pygame.Vector2(0, 4),
+    vel=pygame.Vector2(0, 0),
     mass=1,
     draw_history=False,
     fixed=False,
@@ -76,7 +76,7 @@ while True:
             sys.exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key in CAMERA.movement_keys:
+            if event.key in CAMERA.movement_keys.values():
                 CAMERA.move(event.key)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -100,6 +100,7 @@ while True:
     if attatched_to_mouse:
         attatched_to_mouse.fixed = True
         attatched_to_mouse.pos = mouse_pos_world
+        attatched_to_mouse.vel = pygame.Vector2(0,0)
 
     # rest
     accelerations = calc_acc(
