@@ -18,37 +18,37 @@ attatched_to_mouse = None
 
 # create elements
 c1 = Circle(
-    pygame.Vector2(3, 3),
-    vel=pygame.Vector2(10, 0),
+    position=pygame.Vector2(3, 3),
+    velocity=pygame.Vector2(10, 0),
     mass=1,
     draw_history=False,
     fixed=False,
 )
 c2 = Circle(
-    pygame.Vector2(0, 4),
-    vel=pygame.Vector2(0, 0),
+    position=pygame.Vector2(0, 4),
+    velocity=pygame.Vector2(0, 0),
     mass=1,
     draw_history=False,
     fixed=False,
 )
 c3 = Circle(
-    pygame.Vector2(3, 4),
-    vel=pygame.Vector2(0, 0),
+    position=pygame.Vector2(3, 4),
+    velocity=pygame.Vector2(0, 0),
     mass=1,
     draw_history=False,
     fixed=False,
 )
 c4 = Circle(
-    pygame.Vector2(4, 3),
-    vel=pygame.Vector2(0, 0),
+    position=pygame.Vector2(4, 3),
+    velocity=pygame.Vector2(0, 0),
     mass=1,
     draw_history=False,
     fixed=False,
 )
 
 c_origin = Circle(
-    pygame.Vector2(10, 10),
-    vel=pygame.Vector2(0, 0),
+    position=pygame.Vector2(10, 10),
+    velocity=pygame.Vector2(0, 0),
     mass=1,
     fixed=True,
     color=(255, 0, 0),
@@ -83,7 +83,7 @@ while True:
             # check which object overlays with mouse
             if not attatched_to_mouse:
                 for obj in objects:
-                    if mouse_pos_world.distance_squared_to(obj.pos) <= obj.radius:
+                    if mouse_pos_world.distance_squared_to(obj.position) <= obj.radius:
                         attatched_to_mouse = obj
                         break
 
@@ -99,8 +99,8 @@ while True:
     # interaction
     if attatched_to_mouse:
         attatched_to_mouse.fixed = True
-        attatched_to_mouse.pos = mouse_pos_world
-        attatched_to_mouse.vel = pygame.Vector2(0,0)
+        attatched_to_mouse.position = mouse_pos_world
+        attatched_to_mouse.velocityocity = pygame.Vector2(0,0)
 
     # rest
     accelerations = calc_acc(

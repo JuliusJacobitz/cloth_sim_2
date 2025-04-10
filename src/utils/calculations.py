@@ -32,7 +32,7 @@ def calc_acc(
                     continue
                 else:
                     f = calc_grav_force(obj1, obj2)
-                    direction = (obj2.pos - obj1.pos).normalize()
+                    direction = (obj2.position - obj1.position).normalize()
                     new_acc = new_acc + ((direction * f) / obj1.mass)
 
         # calculate spring forces based on hooke's law
@@ -40,7 +40,7 @@ def calc_acc(
             obj2 = spring.get_neighbour_obj(obj1)
 
             # f = spring.D * spring.delta_l
-            diff = (obj2.pos - obj1.pos)
+            diff = (obj2.position - obj1.position)
             try:
                 direction = diff.normalize()
             except ValueError:
@@ -52,7 +52,7 @@ def calc_acc(
 
             # dampening
             dampening_coeff:float = 2*0.1*math.sqrt(spring.D*obj1.mass)
-            relative_vel:float = (obj2.vel - obj1.vel ) * direction
+            relative_vel:float = (obj2.velocity - obj1.velocity ) * direction
 
             f_spring = spring.D * spring.delta_l
             f_dampening = dampening_coeff*relative_vel
@@ -66,7 +66,7 @@ def calc_acc(
 
         # air drag
         if air_drag and hasattr(obj1, "air_drag_coef"):
-            f = -obj1.air_drag_coef * obj1.vel
+            f = -obj1.air_drag_coef * obj1.velocity
             new_acc = new_acc + (f / obj1.mass)
 
         accelerations.append(new_acc)

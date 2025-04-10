@@ -1,24 +1,8 @@
 import pygame
 from constants import WORLD_HEIGHT, WORLD_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH
 from utils.rendering import CAMERA
+from abc import abstractmethod
 
-# TODO create abstract object class that implements fixed, gravity move and draw, pos etc
-# class AbstractOjbect:
-#     pass
-
-# class Rectangle:
-#     def __init__(self, pos):
-#         self.pos = pos
-
-#         self.color = (255,255,255)
-
-#     def move(self)
-
-#     def draw(self,screen):
-#         pygame.draw.rect(screen, color=self.color, pygame.Rect())
-
-
-# TODO add all objects and springs and shit  to the world as "children"
 class World:
     def __init__(self, width=WORLD_WIDTH, height=WORLD_HEIGHT, color=(35, 35, 35)):
         self.width = width
@@ -38,27 +22,36 @@ class World:
             end = pygame.Vector2(CAMERA.world_to_screen(self.width, i))
             pygame.draw.line(screen, self.color, start_pos=start, end_pos=end)
 
+class GameObject:
+    def __init__(self, mass, position, velocity, acceleration, force) -> None:
+        self.mass = mass
+        self.position = position
+        self.velocity = velocity
+        self.acceleration = acceleration
+        self.force  = force
+    
+    @abstractmethod
+    def move(self, dt, a):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def draw(self, screen):
+        raise NotImplementedError
 
-class Circle:
+class Circle(GameObject):
     air_drag_coef = 1e-4
 
     def __init__(
         self,
-        pos,
-        vel,
-        mass,
+        mass, position, velocity, acceleration=pygame.Vector2(0,0), force=pygame.Vector2(0,0),
         radius=0.1,  # 10 cm
         draw_history: bool = False,
         fixed: bool = False,
         collide: bool = True,
         color=(255, 255, 255),
     ):
-        self.pos = pos  # meters
+        super().__init__(mass, position, velocity, acceleration, force)
         self.pos_history = []
-        self.vel = vel  # m/s
-        assert mass != 0
-        self.mass = mass  # kg
-
         self.fixed = fixed  # if object is affected by outside forces
         self.collide = collide  # if object should collide with walls
 
@@ -69,40 +62,40 @@ class Circle:
 
     def move(self, dt, a):
         if not self.fixed:
-            self.vel[0] = self.vel[0] + a[0] * dt
-            self.vel[1] = self.vel[1] + a[1] * dt
+            self.velocity[0] = self.velocity[0] + a[0] * dt
+            self.velocity[1] = self.velocity[1] + a[1] * dt
 
-            self.pos[0] = self.pos[0] + self.vel[0] * dt
-            self.pos[1] = self.pos[1] + self.vel[1] * dt
+            self.position[0] = self.position[0] + self.velocity[0] * dt
+            self.position[1] = self.position[1] + self.velocity[1] * dt
 
             if self.collide:
                 # Collision detection with ground
-                if self.pos[1] + self.radius > WORLD_HEIGHT:
-                    self.pos[1] = min(
+                if self.position[1] + self.radius > WORLD_HEIGHT:
+                    self.position[1] = min(
                         WORLD_HEIGHT - self.radius,
-                        WORLD_HEIGHT - abs(WORLD_HEIGHT - self.pos[1]),
+                        WORLD_HEIGHT - abs(WORLD_HEIGHT - self.position[1]),
                     )
-                    self.vel[1] = -self.vel[1]
+                    self.velocity[1] = -self.velocity[1]
 
                 # Collision detection with walls
                 # right wall
-                if self.pos[0] + self.radius > WORLD_WIDTH:
-                    self.pos[0] = WORLD_WIDTH - abs(WORLD_WIDTH - self.pos[0])
-                    self.vel[0] = -self.vel[0]
+                if self.position[0] + self.radius > WORLD_WIDTH:
+                    self.position[0] = WORLD_WIDTH - abs(WORLD_WIDTH - self.position[0])
+                    self.velocity[0] = -self.velocity[0]
 
                 # left wall
-                if self.pos[0] - self.radius < 0:
-                    self.pos[0] = abs(self.pos[0])
-                    self.vel[0] = -self.vel[0]
+                if self.position[0] - self.radius < 0:
+                    self.position[0] = abs(self.position[0])
+                    self.velocity[0] = -self.velocity[0]
 
             if self.draw_history:
-                self.pos_history.append((self.pos[0], self.pos[1]))
+                self.pos_history.append((self.position[0], self.position[1]))
 
     def draw(self, screen):
         pygame.draw.circle(
             screen,
             self.color,
-            CAMERA.world_to_screen(self.pos[0], self.pos[1]),
+            CAMERA.world_to_screen(self.position[0], self.position[1]),
             self.radius * CAMERA.scaling_factor,
         )
 
@@ -135,7 +128,7 @@ class Spring:
 
     @property
     def current_l(self):
-        return self.obj1.pos.distance_to(self.obj2.pos)
+        return self.obj1.position.distance_to(self.obj2.position)
 
     @property
     def delta_l(self):
@@ -154,7 +147,7 @@ class Spring:
         pygame.draw.line(
             screen,
             "red",
-            CAMERA.world_to_screen(self.obj1.pos[0], self.obj1.pos[1]),
-            CAMERA.world_to_screen(self.obj2.pos[0], self.obj2.pos[1]),
+            CAMERA.world_to_screen(self.obj1.position[0], self.obj1.position[1]),
+            CAMERA.world_to_screen(self.obj2.position[0], self.obj2.position[1]),
             width=1,
         )
